@@ -31,7 +31,7 @@ def create_app():
     # Add the end resource end points
     api.add_resource(BenchmarkView, '/benchmark/<int:sleep>', methods=['GET'])
     api.add_resource(ServiceView, '/service/<int:sleep>', methods=['GET'])
-    api.add_resource(ServiceView2, '/service2/<int:sleep>', methods=['GET'])
+    api.add_resource(ServiceView2, '/service2', methods=['POST'])
     return app
 
 

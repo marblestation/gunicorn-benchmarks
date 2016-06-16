@@ -3,9 +3,10 @@
 Views
 """
 import time
-import random
+import json
 import requests
 
+from flask import request
 from flask.ext.restful import Resource
 from config import SERVICE_IP, SERVICE_IP_2
 
@@ -27,7 +28,9 @@ class BenchmarkView(Resource):
 
 class ServiceView(Resource):
     """
-    External service view
+    External service view:
+    Contacts a second service that will contact the API at the /benchmark
+    end point.
     """
     def get(self, sleep):
 
@@ -42,11 +45,28 @@ class ServiceView(Resource):
 
 class ServiceView2(Resource):
     """
-    External service view
+    External service view:
+    Contacts a second service that will send a simple response (no further
+    communication, unlike ServiceView).
     """
-    def get(self, sleep):
+    def post(self):
 
-        r = requests.get('{}/{}'.format(SERVICE_IP_2, sleep))
+        post_data = request.get_json(force=True)
+        post_data['last_sent'] = 'api'
+        post_data['sent_from'].append('api')
+
+        if 'sleep' not in post_data:
+            post_data['sleep'] = 0
+
+        # Post to the end point
+        r = requests.post(
+            'http://{ip}/benchmark2'.format(
+                ip=SERVICE_IP_2
+            ),
+            data=json.dumps(post_data)
+        )
+
+        # Get the response content if there was no failure
         try:
             _json = r.json()
         except:

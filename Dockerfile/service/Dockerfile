@@ -2,7 +2,7 @@ FROM phusion/baseimage:0.9.17
 
 RUN apt-get update
 RUN apt-get install -y git bzip2 net-tools curl nano python-pip python-dev
-RUN pip install --upgrade pip gunicorn supervisor
+RUN pip install --upgrade pip supervisor
 
 # add scripts/tags
 COPY app/ /app
