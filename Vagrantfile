@@ -22,7 +22,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     api.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
     api.vm.provider "virtualbox" do |vb|
      vb.memory = "1024"
-     vb.cpus = 2
+     vb.cpus = 1
     end
     # Provision
     api.vm.provision :shell, :path => "./provision/bootstrap.api.sh"
@@ -36,7 +36,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     service.vm.network "forwarded_port", guest: 80, host: 8081, auto_correct: true
     service.vm.provider "virtualbox" do |vb|
      vb.memory = "1024"
-     vb.cpus = 2
+     vb.cpus = 1
     end
     # Provision
     service.vm.provision :shell, :path => "./provision/bootstrap.service.sh"
