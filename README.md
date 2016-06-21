@@ -1,5 +1,22 @@
 # Benchmark
 
+# Setup
+Install:
+  * VirtualBox
+  * vagrant
+
+Then simply:
+
+```bash
+$ pip install -r requirements.txt
+$ vagrant up api
+$ vagrant up service
+$ curl localhost:8080 # API VM's port on host
+  404
+$ curl localhost:8081 # Service VM's port on host
+  404
+```
+
 # Start VM1 (api)
 vagrant up api
 

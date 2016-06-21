@@ -1,6 +1,6 @@
 # 10.0.0.10 is the api
 # 10.0.0.11 is the service
-SERVICE_IP = 'http://10.0.0.10/benchmark'
+SERVICE_IP = '10.0.0.10'
 
 LOGGING = {
     'version': 1,

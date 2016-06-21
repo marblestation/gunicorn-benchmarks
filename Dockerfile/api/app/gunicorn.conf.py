@@ -1,7 +1,7 @@
 import multiprocessing, os
 
 #bind = 'unix:/tmp/gunicorn.benchmark.sock'
-bind = '0.0.0.0:5000'
+bind = '0.0.0.0:80'
 workers = 1
 max_requests = 200
 timeout = 30
