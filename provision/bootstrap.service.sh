@@ -12,10 +12,12 @@ sudo usermod -aG docker vagrant
 
 # docker
 pushd /vagrant/Dockerfile/service
+docker rmi service
 docker build --tag service .
 popd
 docker rm -f service
-docker run -d --name service -p 5050:80 service
+#docker run -d --name service -p 5050:80 service
+docker run -d --hostname service --name service -p 5050:80 --volume /vagrant/Dockerfile/service/app:/app service
 
 # nginx
 sudo cp /vagrant/nginx.conf /etc/nginx/nginx.conf

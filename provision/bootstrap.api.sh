@@ -16,7 +16,8 @@ docker rmi api
 docker build --tag api .
 popd
 docker rm -f api
-docker run -d --name api -p 5050:80 api
+#docker run -d --name api -p 5050:80 api
+docker run -d --hostname api --name api -p 5050:80 --volume /vagrant/Dockerfile/api/app:/app api
 
 # nginx
 sudo cp /vagrant/nginx.conf /etc/nginx/nginx.conf

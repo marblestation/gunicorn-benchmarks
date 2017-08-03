@@ -1,8 +1,25 @@
-FROM phusion/baseimage:0.9.17
+FROM phusion/baseimage:0.9.22
 
-RUN apt-get update
-RUN apt-get install -y git bzip2 net-tools curl nano python-pip python-dev
-RUN pip install --upgrade pip supervisor
+ENV TERM xterm-256color
+ENV LC_ALL C
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        git \
+        bzip2 \
+        net-tools \
+        curl \
+        nano \
+        python-pip \
+        libpq-dev \
+        python-dev && \
+    DEBIAN_FRONTEND=noninteractive apt-get clean && \
+    DEBIAN_FRONTEND=noninteractive apt-get autoremove --purge -y && \
+    rm -rf /root/.cache/* /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN pip install --upgrade pip && \
+    pip install --upgrade setuptools && \
+    pip install --upgrade setuptools
+RUN pip install --upgrade gunicorn==19.6.0 gevent==1.1.2 supervisor==3.3.0 futures==3.0.5
 
 # add scripts/tags
 COPY app/ /app
@@ -12,6 +29,6 @@ COPY gunicorn.sh /etc/service/gunicorn/run
 RUN pip install -r /app/requirements.txt
 
 EXPOSE 80
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+WORKDIR /app
 CMD ["/sbin/my_init"]
 
