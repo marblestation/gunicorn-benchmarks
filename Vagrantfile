@@ -20,6 +20,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     api.vm.box = "ubuntu/trusty64"
     api.vm.network :private_network, ip: "10.0.0.10"
     api.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
+    api.vm.network "forwarded_port", guest: 5050, host: 5050, auto_correct: true
     api.vm.provider "virtualbox" do |vb|
      vb.memory = "1024"
      vb.cpus = 1
@@ -34,6 +35,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     service.vm.box = "ubuntu/trusty64"
     service.vm.network :private_network, ip: "10.0.0.11"
     service.vm.network "forwarded_port", guest: 80, host: 8081, auto_correct: true
+    service.vm.network "forwarded_port", guest: 5050, host: 5051, auto_correct: true
     service.vm.provider "virtualbox" do |vb|
      vb.memory = "1024"
      vb.cpus = 1
