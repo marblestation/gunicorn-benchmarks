@@ -26,9 +26,9 @@ def get_post_data(request):
     return post_data
 
 
-class BenchmarkView(Resource):
+class ServiceRedirectView(Resource):
     """
-    Benchmark of Gunicorn end point
+    View that contacts API end point and returns its response.
     """
 
     def post(self):
@@ -37,22 +37,22 @@ class BenchmarkView(Resource):
         """
 
         post_data = get_post_data(request)
-        post_data['last_sent'] = 'service/benchmark'
-        post_data['sent_from'].append('service/benchmark')
+        post_data['last_sent'] = 'service/redirect'
+        post_data['sent_from'].append('service/redirect')
 
         if 'sleep' not in post_data:
             post_data['sleep'] = 0
 
         start_time = time.gmtime().tm_sec
         # time.sleep(post_data['sleep'])
-        post_data['service/benchmark'] = {
+        post_data['service/redirect'] = {
             'received_time': start_time,
             'sleep': post_data['sleep']
         }
 
-        # Post to the end point
+        # Post to API
         r = requests.post(
-            'http://{ip}/benchmark'.format(
+            'http://{ip}/api_end'.format(
                 ip=SERVICE_IP
             ),
             data=json.dumps(post_data)
@@ -67,9 +67,9 @@ class BenchmarkView(Resource):
         return _json, r.status_code
 
 
-class BenchmarkView2(Resource):
+class ServiceEndView(Resource):
     """
-    Benchmark of Gunicorn end point
+    View that returns a response.
     """
 
     def post(self):
@@ -82,8 +82,8 @@ class BenchmarkView2(Resource):
         start_time = time.gmtime().tm_sec
         time.sleep(sleep)
 
-        r_data['last_sent'] = 'service/benchmark2'
-        r_data['sent_from'].append('service/benchmark2')
+        r_data['last_sent'] = 'service/end'
+        r_data['sent_from'].append('service/end')
         r_data['service'] = {
             'received_time': start_time,
             'sleep': sleep

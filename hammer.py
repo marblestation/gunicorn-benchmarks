@@ -67,7 +67,7 @@ if __name__ == '__main__':
         '--port', dest='port', default=8080
     )
     parser.add_argument(
-        '--endpoint', dest='endpoint', default='service'
+        '--endpoint', dest='endpoint', default='api_redirect'
     )
     parser.add_argument(
         '--sleep', dest='sleep', default=0, type=int
@@ -113,4 +113,5 @@ if __name__ == '__main__':
     should_print = any([i['code'] > 200 for i in results])
     if should_print:
         for result in results:
-            print(result)
+            if result['code'] > 200:
+                print(result)

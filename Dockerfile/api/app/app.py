@@ -7,7 +7,7 @@ import logging.config
 
 from flask import Flask
 from flask.ext.restful import Api
-from views import BenchmarkView, ServiceView, ServiceView2
+from views import ApiEndView, ApiRedirectView, ApiDoubleRedirectView
 
 
 def create_app():
@@ -29,9 +29,9 @@ def create_app():
     api = Api(app)
 
     # Add the end resource end points
-    api.add_resource(BenchmarkView, '/benchmark', methods=['POST'])
-    api.add_resource(ServiceView, '/service', methods=['POST'])
-    api.add_resource(ServiceView2, '/service2', methods=['POST'])
+    api.add_resource(ApiEndView, '/api_end', methods=['POST'])
+    api.add_resource(ApiRedirectView, '/api_redirect', methods=['POST'])
+    api.add_resource(ApiDoubleRedirectView, '/api_double_redirect', methods=['POST'])
     return app
 
 

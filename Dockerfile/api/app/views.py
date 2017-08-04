@@ -26,9 +26,9 @@ def get_post_data(request):
     return post_data
 
 
-class BenchmarkView(Resource):
+class ApiEndView(Resource):
     """
-    Benchmark of Gunicorn end point
+    View that returns a response.
     """
 
     def post(self):
@@ -40,8 +40,8 @@ class BenchmarkView(Resource):
         start_time = time.gmtime().tm_sec
         time.sleep(sleep)
 
-        r_data['last_sent'] = 'api/benchmark'
-        r_data['sent_from'].append('api/benchmark')
+        r_data['last_sent'] = 'api/end'
+        r_data['sent_from'].append('api/end')
         r_data['service'] = {
             'received_time': start_time,
             'sleep': sleep
@@ -50,24 +50,22 @@ class BenchmarkView(Resource):
         return r_data, 200
 
 
-class ServiceView(Resource):
+class ApiRedirectView(Resource):
     """
-    External service view:
-    Contacts a second service that will contact the API at the /benchmark
-    end point.
+    View that contacts a second service which will return a response.
     """
     def post(self):
 
         post_data = get_post_data(request)
-        post_data['last_sent'] = 'api/service'
-        post_data['sent_from'].append('api/service')
+        post_data['last_sent'] = 'api/double_redirect'
+        post_data['sent_from'].append('api/double_redirect')
 
         if 'sleep' not in post_data:
             post_data['sleep'] = 0
 
         # Post to the end point
         r = requests.post(
-            'http://{ip}/benchmark'.format(
+            'http://{ip}/service_end'.format(
                 ip=SERVICE_IP
             ),
             data=json.dumps(post_data)
@@ -82,24 +80,23 @@ class ServiceView(Resource):
         return _json, r.status_code
 
 
-class ServiceView2(Resource):
+class ApiDoubleRedirectView(Resource):
     """
-    External service view:
-    Contacts a second service that will send a simple response (no further
-    communication, unlike ServiceView).
+    View that contacts a second service that will contact the API and
+    return a response.
     """
     def post(self):
 
         post_data = get_post_data(request)
-        post_data['last_sent'] = 'api/service2'
-        post_data['sent_from'].append('api/service2')
+        post_data['last_sent'] = 'api/redirect'
+        post_data['sent_from'].append('api/redirect')
 
         if 'sleep' not in post_data:
             post_data['sleep'] = 0
 
-        # Post to the end point
+        # Post to the next point
         r = requests.post(
-            'http://{ip}/benchmark2'.format(
+            'http://{ip}/service_redirect'.format(
                 ip=SERVICE_IP
             ),
             data=json.dumps(post_data)
