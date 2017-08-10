@@ -6,7 +6,7 @@
     entrypoint wsgi script
 """
 
-import app
+from api import app
 from werkzeug.serving import run_simple
 
 application = app.create_app()

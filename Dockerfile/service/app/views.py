@@ -50,6 +50,7 @@ class ServiceRedirectView(Resource):
             'sleep': post_data['sleep']
         }
 
+        #time.sleep(15)
         # Post to API
         r = requests.post(
             'http://{ip}/api_end'.format(

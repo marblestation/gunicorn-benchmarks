@@ -21,7 +21,7 @@ threads = int(os.environ.get('GUNICORN_THREADS', multiprocessing.cpu_count() * 4
 
 # restart aftex x reqs, 0 means no restart
 max_requests = int(os.environ.get('GUNICORN_MAX_REQUESTS', 1000))
-max_requests_jitter = int(os.environ.get('GUNICORN_MAX_REQUEST_JITTER', 5))
+max_requests_jitter = int(os.environ.get('GUNICORN_MAX_REQUESTS_JITTER', 5))
 
 timeout = int(os.environ.get('GUNICORN_TIMEOUT', 30))
 graceful_timeout = int(os.environ.get('GUNICORN_GRACEFUL_TIMEOUT', 20))
@@ -33,12 +33,18 @@ debug = bool_map.get(os.environ.get('GUNICORN_DEBUG'), False)
 #loglevel=os.environ.get('GUNICORN_LOG_LEVEL', 'info')
 loglevel=os.environ.get('GUNICORN_LOG_LEVEL', 'debug')
 
-# The maximum number of pending connections (waiting to be served)
+## The maximum number of pending connections (waiting to be served)
+#if worker_class == 'sync':
+    #backlog = max(workers * threads + 10, 100)
+#else:
+    #backlog = max(workers * (threads or 1) * 100, 1000)
+    #worker_connections = int(os.environ.get('GUNICORN_WORKER_CONNECTIONS', 2*backlog))
+backlog = int(os.environ.get('GUNICORN_BACKLOG', 2048)) # default value
+worker_connections = int(os.environ.get('GUNICORN_WORKER_CONNECTIONS', 1000)) # default value
+
 if worker_class == 'sync':
-    backlog = max(workers * threads + 10, 100)
-else:
-    backlog = max(workers * (threads or 1) * 100, 1000)
-    worker_connections = int(os.environ.get('GUNICORN_WORKER_CONNECTIONS', 2*backlog))
+    import gevent_psycopg2
+    gevent_psycopg2.monkey_patch()
 
 access_log_format = '"%({X-Forwarded-For}i)s" "%(t)s" "%(r)s" "%(m)s" "%(U)s" "%(q)s" "%(H)s" "%(s)s" "%(b)s" "%(f)s" "%(a)s" "%(D)s" "%({cookie}i)s" "%({authorization}i)s"'
 

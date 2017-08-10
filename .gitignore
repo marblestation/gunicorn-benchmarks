@@ -3,3 +3,4 @@
 *.vagrant
 python/
 tmp/
+alembic/versions/

@@ -12,7 +12,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
         nano \
         python-pip \
         libpq-dev \
-        python-dev && \
+        python-dev \
+        build-essential && \
     DEBIAN_FRONTEND=noninteractive apt-get clean && \
     DEBIAN_FRONTEND=noninteractive apt-get autoremove --purge -y && \
     rm -rf /root/.cache/* /var/lib/apt/lists/* /tmp/* /var/tmp/*

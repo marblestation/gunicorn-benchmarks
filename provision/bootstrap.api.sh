@@ -19,6 +19,12 @@ docker rm -f api
 #docker run -d --name api -p 5050:80 api
 docker run -d --hostname api --name api -p 5050:80 --volume /vagrant/Dockerfile/api/app:/app api
 
+echo "Waiting 15s for api docker to start..."
+sleep 15
+docker exec api mkdir -p alembic/versions/
+docker exec api alembic -c ./alembic.ini revision -m "baseline" --autogenerate
+docker exec api alembic -c ./alembic.ini upgrade head
+
 # nginx
 sudo cp /vagrant/nginx.conf /etc/nginx/nginx.conf
 sudo service nginx start

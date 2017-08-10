@@ -8,7 +8,7 @@ import logging.config
 from flask import Flask
 from flask.ext.restful import Api
 from views import ApiEndView, ApiRedirectView, ApiDoubleRedirectView
-
+from models import db
 
 def create_app():
     """
@@ -24,6 +24,9 @@ def create_app():
     logging.config.dictConfig(
         app.config['LOGGING']
     )
+
+    # Initialize database
+    db.init_app(app)
 
     # Register extensions
     api = Api(app)
@@ -45,10 +48,10 @@ def load_config(app):
     :return: None
     """
 
-    app.config.from_pyfile('config.py')
+    app.config.from_pyfile('../config.py')
 
     try:
-        app.config.from_pyfile('local_config.py')
+        app.config.from_pyfile('../local_config.py')
     except IOError:
         app.logger.warning('Could not load local_config.py')
 

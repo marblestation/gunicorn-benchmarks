@@ -9,6 +9,7 @@ import requests
 from flask import request
 from flask.ext.restful import Resource
 from config import SERVICE_IP
+from models import Foo, db
 
 
 def get_post_data(request):
@@ -25,6 +26,17 @@ def get_post_data(request):
     post_data = dict(post_data)
     return post_data
 
+def store_in_db(post_data):
+    #db.session.begin() # This fails saying that a transaction has already been opened
+    foo = Foo(
+                last_sent=str(post_data['last_sent']), \
+                client=str(post_data['client']), \
+                sent_from=str(post_data['sent_from']), \
+                service=str(post_data.get('service', "-")), \
+                sleep=int(post_data['sleep'])
+            )
+    db.session.add(foo)
+    db.session.commit() # If this is commented and SQLALCHEMY_COMMIT_ON_TEARDOWN=False, commit does not happen and changes are not saved to PostgreSQL
 
 class ApiEndView(Resource):
     """
@@ -35,19 +47,31 @@ class ApiEndView(Resource):
         """
         GET response
         """
-        r_data = get_post_data(request)
-        sleep = r_data.get('sleep', 0)
+        post_data = get_post_data(request)
+        sleep = post_data.get('sleep', 0)
         start_time = time.gmtime().tm_sec
         time.sleep(sleep)
 
-        r_data['last_sent'] = 'api/end'
-        r_data['sent_from'].append('api/end')
-        r_data['service'] = {
+        post_data['last_sent'] = 'api/end'
+        post_data['sent_from'].append('api/end')
+        post_data['service'] = {
             'received_time': start_time,
             'sleep': sleep
         }
+        store_in_db(post_data) # INSERT in PostgreSQL without forced sleep
 
-        return r_data, 200
+        ## gunicorn automatically monkey-patches when async worker is used: gevent.sleep(x)
+        #time.sleep(10)
+
+        #from sqlalchemy import text
+        #sql = text("SELECT sent_from FROM foo, pg_sleep(10);")
+        #result = db.session.execute(sql)
+        ##sent_from = []
+        ##for row in result:
+            ##sent_from.append(row[0])
+
+
+        return post_data, 200
 
 
 class ApiRedirectView(Resource):
@@ -93,6 +117,8 @@ class ApiDoubleRedirectView(Resource):
 
         if 'sleep' not in post_data:
             post_data['sleep'] = 0
+
+        store_in_db(post_data) # INSERT in PostgreSQL without forced sleep
 
         # Post to the next point
         r = requests.post(

@@ -14,16 +14,32 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
 
+  # VM 0
+  config.vm.define :postgres do |postgres|
+    # Define box
+    postgres.vm.box = "ubuntu/trusty64"
+    postgres.vm.hostname = "vagrant_postgres"
+    postgres.vm.network :private_network, ip: "10.0.0.12"
+    postgres.vm.network "forwarded_port", guest: 5432, host: 15432, auto_correct: true
+    postgres.vm.provider "virtualbox" do |vb|
+        vb.memory = "1024"
+        vb.cpus = 1
+    end
+    # Provision
+    postgres.vm.provision :shell, :path => "./provision/bootstrap.postgres.sh"
+  end
+
   # VM 1
   config.vm.define :api do |api|
     # Define box
     api.vm.box = "ubuntu/trusty64"
+    api.vm.hostname = "vagrant_api"
     api.vm.network :private_network, ip: "10.0.0.10"
     api.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
     api.vm.network "forwarded_port", guest: 5050, host: 5050, auto_correct: true
     api.vm.provider "virtualbox" do |vb|
-     vb.memory = "1024"
-     vb.cpus = 1
+        vb.memory = "1024"
+        vb.cpus = 1
     end
     # Provision
     api.vm.provision :shell, :path => "./provision/bootstrap.api.sh"
@@ -33,15 +49,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define :service do |service|
     # Define box
     service.vm.box = "ubuntu/trusty64"
+    service.vm.hostname = "vagrant_service"
     service.vm.network :private_network, ip: "10.0.0.11"
     service.vm.network "forwarded_port", guest: 80, host: 8081, auto_correct: true
     service.vm.network "forwarded_port", guest: 5050, host: 5051, auto_correct: true
     service.vm.provider "virtualbox" do |vb|
-     vb.memory = "1024"
-     vb.cpus = 1
+        vb.memory = "1024"
+        vb.cpus = 1
     end
     # Provision
     service.vm.provision :shell, :path => "./provision/bootstrap.service.sh"
   end
+  
 
 end
