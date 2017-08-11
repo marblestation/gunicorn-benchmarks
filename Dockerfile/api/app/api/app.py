@@ -7,8 +7,10 @@ import logging.config
 
 from flask import Flask
 from flask.ext.restful import Api
+from limiter import ratelimiter
 from views import ApiEndView, ApiRedirectView, ApiDoubleRedirectView
 from models import db
+
 
 def create_app():
     """
@@ -27,6 +29,9 @@ def create_app():
 
     # Initialize database
     db.init_app(app)
+
+    # Initialize rate limiter
+    ratelimiter.init_app(app)
 
     # Register extensions
     api = Api(app)

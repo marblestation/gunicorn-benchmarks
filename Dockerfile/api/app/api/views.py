@@ -11,6 +11,15 @@ from flask.ext.restful import Resource
 from config import SERVICE_IP
 from models import Foo, db
 
+#from flask.ext.ratelimiter import ratelimit
+from limiter import ratelimiter
+
+# Set rate limits
+N_REQUESTS = 10000
+PER_SECOND = 100
+# over_limit=lambda x: "Rate limit was exceeded", 429
+# scope_func=lambda: request.remote_addr,
+# key_func=lambda: request.endpoint
 
 def get_post_data(request):
     """
@@ -42,7 +51,9 @@ class ApiEndView(Resource):
     """
     View that returns a response.
     """
+    decorators = [ratelimiter.limit("1000/second", methods=['post'])] # Flask Limiter
 
+    #@ratelimit(N_REQUESTS, PER_SECOND) # Flask RateLimiter (DEPRECATED)
     def post(self):
         """
         GET response

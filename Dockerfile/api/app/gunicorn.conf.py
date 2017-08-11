@@ -42,9 +42,12 @@ loglevel=os.environ.get('GUNICORN_LOG_LEVEL', 'debug')
 backlog = int(os.environ.get('GUNICORN_BACKLOG', 2048)) # default value
 worker_connections = int(os.environ.get('GUNICORN_WORKER_CONNECTIONS', 1000)) # default value
 
-if worker_class == 'sync':
+if worker_class != 'sync':
     import gevent_psycopg2
     gevent_psycopg2.monkey_patch()
+    from gevent import socket
+    import redis.connection
+    redis.connection.socket = socket
 
 access_log_format = '"%({X-Forwarded-For}i)s" "%(t)s" "%(r)s" "%(m)s" "%(U)s" "%(q)s" "%(H)s" "%(s)s" "%(b)s" "%(f)s" "%(a)s" "%(D)s" "%({cookie}i)s" "%({authorization}i)s"'
 

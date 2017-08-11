@@ -1,10 +1,11 @@
-from flask.ext.security import UserMixin
+#from flask.ext.security import UserMixin
 from flask_sqlalchemy import SQLAlchemy as FlaskSQLAlchemy
 import datetime
 
 db = FlaskSQLAlchemy()
 
-class User(UserMixin, db.Model):
+#class User(UserMixin, db.Model):
+class User(db.Model):
     """
     Define the user model
     """

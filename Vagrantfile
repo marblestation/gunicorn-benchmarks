@@ -18,7 +18,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define :postgres do |postgres|
     # Define box
     postgres.vm.box = "ubuntu/trusty64"
-    postgres.vm.hostname = "vagrant_postgres"
+    postgres.vm.hostname = "vagrant-postgres"
     postgres.vm.network :private_network, ip: "10.0.0.12"
     postgres.vm.network "forwarded_port", guest: 5432, host: 15432, auto_correct: true
     postgres.vm.provider "virtualbox" do |vb|
@@ -30,10 +30,25 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # VM 1
+  config.vm.define :redis do |redis|
+    # Define box
+    redis.vm.box = "ubuntu/trusty64"
+    redis.vm.hostname = "vagrant-redis"
+    redis.vm.network :private_network, ip: "10.0.0.13"
+    redis.vm.network "forwarded_port", guest: 6379, host: 16379, auto_correct: true
+    redis.vm.provider "virtualbox" do |vb|
+        vb.memory = "1024"
+        vb.cpus = 1
+    end
+    # Provision
+    redis.vm.provision :shell, :path => "./provision/bootstrap.redis.sh"
+  end
+
+  # VM 2
   config.vm.define :api do |api|
     # Define box
     api.vm.box = "ubuntu/trusty64"
-    api.vm.hostname = "vagrant_api"
+    api.vm.hostname = "vagrant-api"
     api.vm.network :private_network, ip: "10.0.0.10"
     api.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
     api.vm.network "forwarded_port", guest: 5050, host: 5050, auto_correct: true
@@ -45,11 +60,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     api.vm.provision :shell, :path => "./provision/bootstrap.api.sh"
   end
 
-  # VM 2
+  # VM 3
   config.vm.define :service do |service|
     # Define box
     service.vm.box = "ubuntu/trusty64"
-    service.vm.hostname = "vagrant_service"
+    service.vm.hostname = "vagrant-service"
     service.vm.network :private_network, ip: "10.0.0.11"
     service.vm.network "forwarded_port", guest: 80, host: 8081, auto_correct: true
     service.vm.network "forwarded_port", guest: 5050, host: 5051, auto_correct: true

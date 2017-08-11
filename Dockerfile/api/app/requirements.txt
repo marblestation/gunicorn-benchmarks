@@ -7,4 +7,10 @@ Flask-SQLAlchemy==2.1
 psycopg2==2.6.1
 gevent-psycopg2==0.0.3
 alembic==0.8.1
-Flask-Security==1.7.4
+#Flask-Security==1.7.4
+## Flask-RateLimiter is now deprecated in favour of Flask-Limiter
+##   https://github.com/inveniosoftware-attic/flask-ratelimiter/tree/3b2f84e8b12c2eb3d0f90e760e2a43f17de81c2b
+git+https://github.com/inveniosoftware/flask-ratelimiter@3b2f84e8b12c2eb3d0f90e760e2a43f17de81c2b#egg=flask-ratelimiter
+flask-limiter==0.9.5
+redis==2.10.5
+
